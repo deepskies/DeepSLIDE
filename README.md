@@ -1,4 +1,4 @@
-We present **DeepCosmoSLIDE**: a **S**trong **L**ens based **I**nference for **D**ark **E**nergy. We use Simulation Based Inference (SBI) with Neural Ratio Estimation (NRE) to constrain Dark Energy parameter from a population of strong galaxy-galaxy lenses.
+We present **DeepSLIDE**: a **S**trong **L**ens based **I**nference for **D**ark **E**nergy. We use Simulation-Based Inference (SBI) with Neural Ratio Estimation (NRE) to constrain Dark Energy parameter from a population of strong galaxy-galaxy lenses.
 
 ## Introduction 
 
@@ -16,7 +16,7 @@ $\textbf{Analysis Workflow}$
 
 The following figure summarizes the workflow of the analysis. 
 
-The strong lens images are genereated using a simulator where the parameters are sampled from a prior distribution. The training data for the NRE network (classifier) includes the image and the parameter of interest. The network outputs the likelihood-to-evidence ratio. The trained model is implemented on the observations to estimate the posterior.
+The strong lens images are generated using a simulator where the parameters are sampled from a prior distribution. The training data for the NRE network (classifier) includes the image and the parameter of interest. The network outputs the likelihood-to-evidence ratio. The trained model is implemented on the observations to estimate the posterior.
 
 ![Workflow](./figures/SBI_NRE_workflow.png)
 
@@ -24,18 +24,18 @@ The strong lens images are genereated using a simulator where the parameters are
 
 ### Data
 
-The data used for this analysis can be found on Zenodo (link will be provided shortly).
+The data used for this analysis can be found on zenodo (link will be provided shortly).
 
 The images are generated using [Deeplenstronomy](https://github.com/deepskies/deeplenstronomy) package.
 
 This data can be generated using the yaml files in `/deeplenstornomy_templates` as inputs to $\texttt{Deeplenstronomy}$.
 
-The simulation outputs the data into a folder which includes images (`/CONFIGURATION_1_images.npy`) and the metadata (`/CONFIGURATION_1_metadata.csv`) assocated with the image generation. 
+The simulation outputs the data into a folder which includes images (`/CONFIGURATION_1_images.npy`) and the metadata (`/CONFIGURATION_1_metadata.csv`) associated with the image generation. 
 
-$\textbf{Training data}$
+$\textbf{Training data}$:
 We train, validate, and test the NRE model on simulated data of 1M strong lens images. 
 
-$\textbf{Test data for population-level analysis}$
+$\textbf{Test data for population-level analysis}$:
 We generate three datasets of 3000 images each by fixing w = -1.2, -1.0, and -0.8 respectively. 
 
 
@@ -55,7 +55,7 @@ $\textbf{Model Training}$
 `train_model.ipynb`
 This notebook includes reading in the data, preprocessing of the images, 
 and training the model. 
-Three models with random weight initializations (`seed` input to the model) are run in our analysis to check robustness. One of the models `working_model_1M-2-034_seed128_v2.keras` is available on Zonodo (link will be provided shortly).
+Three models with random weight initializations (`seed` input to the model) are run in our analysis to check robustness. One of the models `working_model_1M-2-034_seed128_v2.keras` is available on zenodo (link will be provided shortly).
 
 This trained model can be directly loaded (without having to re-train the model) using 
 
@@ -66,9 +66,9 @@ $\textbf{Model Evaluation}$
 `compare_random_seeds.ipynb` code is for checking the performance of the model on test data of 2000 images.
 The code includes plotting the Receiver Operating Curve (ROC) for the three models. It also includes calculating and plotting the analytical posteriors of a few randomly selected strong lenses.
 
-`plot_image_posterior.ipynb` code is for plotting the training data and show the correlation between the Einstein radius and $w$. This code also plots the image of strong lens from the training data and the corresponing analytical posterior.
+`plot_image_posterior.ipynb` code is for plotting the training data and show the correlation between the Einstein radius and $w$. This code also plots the image of strong lens from the training data and the corresponding analytical posterior.
 
-`plot_residuals` is to plot the predicted mean $w$ of the analytical posterior with 1 $\sigma$ error bar Vs the true $w$ of the 2000 test images. We also compute the posterior coverage plot to check the model uncertainity. 
+`plot_residuals` is to plot the predicted mean $w$ of the analytical posterior with 1 $\sigma$ error bar Vs the true $w$ of the 2000 test images. We also compute the posterior coverage plot to check the model uncertainty. 
 
 $\textbf{Population-level Analysis}$
 
@@ -79,7 +79,7 @@ $\textbf{Population-level Analysis}$
 
 ### Authors
 
-Sreevani Jarugula
+Sreevani Jarugula, Brian Nord, Abhijith Gandrakota, and Aleksandra Ćiprijanović
 
 ### References
 
