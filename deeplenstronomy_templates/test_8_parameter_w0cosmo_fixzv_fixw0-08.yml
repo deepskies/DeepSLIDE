@@ -1,0 +1,134 @@
+DATASET:
+    NAME: w0_8param_fixzv_test_fixw0-08_3000
+    PARAMETERS:
+        SIZE: 3000 # number of images in the full datase.
+        OUTDIR: w0_8param_fixzv_test_fixw0-08_3000 # will be created on your system if your request to save images
+        SEED: 42 
+
+COSMOLOGY:
+    NAME: 'wCDM'
+    PARAMETERS:
+        H0: 70
+        Om0: 0.3 
+        Ode0: 0.7
+        w0: -0.8
+IMAGE:
+    PARAMETERS:
+        exposure_time:
+            DISTRIBUTION:
+                NAME: des_exposure_time
+                PARAMETERS: None
+        numPix: 32
+        pixel_scale: 0.263
+        psf_type: 'GAUSSIAN'
+        read_noise: 7
+        ccd_gain:
+            DISTRIBUTION:
+                NAME: des_ccd_gain
+                PARAMETERS: None
+
+SURVEY:
+    PARAMETERS:
+        BANDS: g
+        seeing: 0.9
+        magnitude_zero_point: 30.0
+        sky_brightness: 30.0
+        num_exposures: 10
+
+SPECIES:
+    GALAXY_1:
+        NAME: LENS
+        LIGHT_PROFILE_1:
+            NAME: SERSIC_ELLIPSE
+            PARAMETERS:
+                magnitude: 100
+                center_x: 0
+                center_y: 0
+                R_sersic: 1
+                n_sersic: 4
+                e1: 0 
+                e2: 0.5 
+
+        MASS_PROFILE_1:
+            NAME: SIE
+            PARAMETERS:
+                sigma_v: 200
+                e1: 
+                    DISTRIBUTION:
+                        NAME: uniform
+                        PARAMETERS:
+                            minimum: -0.1
+                            maximum: 0.1
+                e2: 
+                    DISTRIBUTION:
+                        NAME: uniform
+                        PARAMETERS:
+                            minimum: -0.1
+                            maximum: 0.1
+                center_x: 0.0
+                center_y: 0.0 
+            
+
+    GALAXY_2:
+        NAME: SOURCE
+        LIGHT_PROFILE_1:
+            NAME: SERSIC_ELLIPSE
+            PARAMETERS:
+                magnitude: 
+                    DISTRIBUTION:
+                        NAME: uniform
+                        PARAMETERS:
+                            minimum: 19
+                            maximum: 24
+                center_x: 0.0
+                center_y: 0.0
+                R_sersic: 
+                    DISTRIBUTION:
+                        NAME: uniform
+                        PARAMETERS:
+                            minimum: 0.1
+                            maximum: 3
+                n_sersic: 
+                    DISTRIBUTION:
+                        NAME: uniform
+                        PARAMETERS:
+                            minimum: 0.5
+                            maximum: 8
+                e1: 
+                    DISTRIBUTION:
+                        NAME: uniform
+                        PARAMETERS:
+                            minimum: -0.1
+                            maximum: 0.1
+                e2: 
+                    DISTRIBUTION:
+                        NAME: uniform
+                        PARAMETERS:
+                            minimum: -0.1
+                            maximum: 0.1
+        MASS_PROFILE_1:
+            NAME: SIE
+            PARAMETERS:
+                theta_E: 2.0
+                e1: 0.1
+                e2: -0.1
+                center_x: 0.0
+                center_y: 0.0
+
+
+GEOMETRY:
+    CONFIGURATION_1:
+        NAME: GALAXYGALAXY
+        FRACTION: 1
+        PLANE_1:
+            OBJECT_1: LENS
+            PARAMETERS:
+                REDSHIFT: 0.1
+        PLANE_2:
+            OBJECT_1: SOURCE
+            PARAMETERS:
+                REDSHIFT: 2.0
+
+
+             
+         

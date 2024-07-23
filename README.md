@@ -1,152 +1,104 @@
-This template is designed to give a framework for public distributions of "science" projects. 
-It is a guideline, showing the minimum things recommended to include with your public repository, 
-to make your results easily replicable. 
-It is not exhaustive by any means, nor is everything here strictly required in all cases! 
-Please consider this as a loose list of things considered "nice to have", and as reference material above all. 
+We present **DeepCosmoSLIDE**: a **S**trong **L**ens based **I**nference for **D**ark **E**nergy. We use Simulation Based Inference (SBI) with Neural Ratio Estimation (NRE) to constrain Dark Energy parameter from a population of strong galaxy-galaxy lenses.
 
-# DeepSkies Science Repo Template 
-Include status links to different outside resources, such as build info, paper info, license, etc. 
-You can select your license from the [choose a license page.](https://choosealicense.com/licenses/), and then change the name of the license in the badge and link included. 
-For workflows, change the name of the repo listed in the img.shields link to point to your repo and workflows.
+## Introduction 
 
-[![status](https://img.shields.io/badge/arXiv-000.000-red)](arxiv link if applicable)
-[![status](https://img.shields.io/badge/PyPi-0.0.0.0-blue)](pypi link if applicable)
-[![status](https://img.shields.io/badge/License-MIT-lightgrey)](MIT or Apache 2.0 or another requires link changed)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/owner/repo/build-repo)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/owner/repo/test-repo?label=test)
+Strong gravitational lensing offers crucial insights into cosmology, but traditional Monte Carlo methods for cosmological inference are computationally prohibitive and inadequate for processing the thousands of lenses anticipated from future cosmic surveys. New tools for inference, such as SBI using NRE, address this challenge effectively. NRE is a classifier neural network to differentiate between two probability distributions: 
 
-Your overview should contain a brief summary of the project, and figures and examples showing input and output. 
+$(x,w) \sim\ p(x,w)$ with class label y=1
 
-## Installation 
-Information about install. 
-We recommend publishing to pypi using a poetry package management system (described below) but we also provide instructions for using python virtual environments and showyourwork with conda integration. 
+$(x,w) \sim\ p(x)p(w)$ with class label y=0
 
-Example of what your installation instructions should look like: 
+where $x$ is the strong lens image and $w$ is the dark energy equation-of-state parameter that generated the image.
 
-To install with pip: 
-> pip install git+https://github.com/DeepSkies/science_template.git
->
-This will set up a virtual environment, which can b  e run with on mac or linux
-> source venv/bin/activate
->
-Or on windows with 
-> venv\Scripts\activate.bat
+By training a machine learning model on simulated data of strong lenses, we can learn the likelihood-to-evidence ratio $\frac{p(x|w)}{p(x)}$. This is used for robust inference of the posterior $p(w|\{x_{0}\})$ from a population of strong lens images $\{x_{0}\}$.
 
-Verify installation is functional is all tests are passing
-> pytest
+$\textbf{Analysis Workflow}$
 
-Additionally, include how to install from source (via git clone) and associated setup. 
+The following figure summarizes the workflow of the analysis. 
 
-### poetry 
-Poetry is our recommended method of handling a package environment as publishing and building is handled by a toml file that handles all possibly conflicting dependencies. 
-Full docs can be found [here](https://python-poetry.org/docs/basic-usage/).
+The strong lens images are genereated using a simulator where the parameters are sampled from a prior distribution. The training data for the NRE network (classifier) includes the image and the parameter of interest. The network outputs the likelihood-to-evidence ratio. The trained model is implemented on the observations to estimate the posterior.
 
-Install instructions: 
+![Workflow](./figures/SBI_NRE_workflow.png)
 
-Add poetry to your python install 
-> pip install poetry
+## Getting started
 
-Install the pyproject file
-> poetry install 
+### Data
 
-To add another package to your environment
-> poetry add (package name)
+The data used for this analysis can be found on Zenodo (link will be provided shortly).
 
-To run within your environment 
->poetry run (file).py
+The images are generated using [Deeplenstronomy](https://github.com/deepskies/deeplenstronomy) package.
 
-If you wish to start from scratch: 
-> pip install poetry
-> poetry init
+This data can be generated using the yaml files in `/deeplenstornomy_templates` as inputs to $\texttt{Deeplenstronomy}$.
 
-### virtual environment
-At the bare minimum, project dependencies must be contained and strictly defined and shared for replication purposes. 
-The easiest way to do this is to use a python virtual environment. 
-Full instructions are found [here.](https://docs.python.org/3/library/venv.html)
+The simulation outputs the data into a folder which includes images (`/CONFIGURATION_1_images.npy`) and the metadata (`/CONFIGURATION_1_metadata.csv`) assocated with the image generation. 
 
-To initialize an environment:
-> python3 -m venv /path/to/env
-> 
-To activate it: 
-Linux and Mac: 
-> source venv/bin/activate
-> 
-Windows: 
-> venv\Scripts\activate.bat
+$\textbf{Training data}$
+We train, validate, and test the NRE model on simulated data of 1M strong lens images. 
 
-And use pip as normal to install packages. 
+$\textbf{Test data for population-level analysis}$
+We generate three datasets of 3000 images each by fixing w = -1.2, -1.0, and -0.8 respectively. 
 
-In order to produce a file to share with your version of dependencies, produce a requirements.txt. 
-This can later be installed in full to a new system using `pip install -r requirements.txt`. 
-Note that this does not manage any versioning conflicts and can very quickly become depreciated. 
-> pip freeze >requirements.txt 
 
-### show your work with conda
-We also supply a ["show your work"](https://github.com/showyourwork/showyourwork) workflow to use with a conda venv which can compile the example tex file in `DeepTemplate-Science/src/tex/ms.tex`
+<!-- #### Architecture
+The network is a ResNet architecture to classify between two classes. We train the network by minimizing the Brinay Cross Entropy (BCE) loss function by dynamically adjusting the learning rate when the vali-
+dation loss is plateaued by a decay factor of 0.1 starting
+from $1e^{−2}$ to $1e^{−6}$, if the validation loss does not improve
+over five epochs. We include an option for early stopping if the validation loss does not improve over 20 epochs. The model is trained on NVIDIA A100 GPU for 71 epochs with a typical training time of 25
+minutes. -->
 
-To execute this workflow: 
->showyourwork build
+### Notebooks for analysis
 
-This will build your project and install the conda venv associated with the project (or just compile the document if you haven't been using it) and output the document as a pdf. 
-If you would like to integrate with overleaf to push your work remotely, you can do that by adding the following lines to your showyourwork.yml file: 
-> 
->   overleaf: 
-> 
->       id: URL identifying your project
->       push:
->           - src/tex/figures
->           - src/tex/output
->       pull:
->           - src/tex/ms.tex
->           - src/tex/bib.bib
+The notebooks in `/notebooks` can be run to reproduce the results of the paper. The python scripts are currently being developed to be run from the terminal.
 
-And adding the system variables `$OVERLEAF_EMAIL` and `$OVERLEAF_PASSWORD` with your credentials. 
-To do this, use a bash terminal to input the command `export OVERLEAF_EMAIL='youremail@server.org`, and do the same for your password. 
-To verify these are set correctly, run `echo $OVERLEAF_EMAIL`and `echo $OVERLEAF_PASSWORD`. 
-To complete this setup, run `showyourwork build` as if you were compiling a project.
-The above snippet of the yaml file will then push anything in the `src/tex/figures` and `src/tex/output` folders to the remote, under the `images` folder.  
+$\textbf{Model Training}$ 
 
-The existing yaml file is set up to modify the [template project](*https://www.overleaf.com/read/fsjwntpjmdzw). 
-The differences in the ID in the template and the url you'll see is due to the fact that only project owners have access to that ID (even if I want to share). 
-This limits the person who can build the project to the person that owns the overleaf page, at least until Latex sets up token authentication. 
-The workaround for this is account sharing, but this is not recommended. 
+`train_model.ipynb`
+This notebook includes reading in the data, preprocessing of the images, 
+and training the model. 
+Three models with random weight initializations (`seed` input to the model) are run in our analysis to check robustness. One of the models `working_model_1M-2-034_seed128_v2.keras` is available on Zonodo (link will be provided shortly).
 
-For more information please see the [showyourwork page on the topic](https://show-your.work/en/latest/overleaf/).
+This trained model can be directly loaded (without having to re-train the model) using 
+
+`model = tf.keras.models.load_model(model_name)`
+
+$\textbf{Model Evaluation}$ 
+
+`compare_random_seeds.ipynb` code is for checking the performance of the model on test data of 2000 images.
+The code includes plotting the Receiver Operating Curve (ROC) for the three models. It also includes calculating and plotting the analytical posteriors of a few randomly selected strong lenses.
+
+`plot_image_posterior.ipynb` code is for plotting the training data and show the correlation between the Einstein radius and $w$. This code also plots the image of strong lens from the training data and the corresponing analytical posterior.
+
+`plot_residuals` is to plot the predicted mean $w$ of the analytical posterior with 1 $\sigma$ error bar Vs the true $w$ of the 2000 test images. We also compute the posterior coverage plot to check the model uncertainity. 
+
+$\textbf{Population-level Analysis}$
+
+`NRE_varyastro_w12.ipynb`, `NRE_varyastro_w1.ipynb`, and `NRE_varyastro_w08.ipynb` include functions to compute the joint posterior from 3000 images with $w$ fixed to -1.2, -1.0, and -0.8 respectively. We show both MCMC and analytical methods to calculate the posterior.
+
+`Compare_mcmc_analytical.ipynb` compares the posteriors from the MCMC and analytical methods.
+
+
+### Authors
+
+Sreevani Jarugula
+
+### References
+
+If you use this code, please cite our paper (Link to be posted shortly)
 
 
 
-## Quickstart
-Description of the immediate steps to replicate your results, pointing to a script with cli execution. 
-You can also point to a notebook if your results are highly visual and showing plots in line with code is desired.
 
-Example: 
 
-To run full model training: 
-> python3 train.py --data /path/to/data/folder
 
-To evaluate a single ""data format of choice""
-> python3 eval.py --data /path/to/data
 
-## Documentation 
-Please include any further information needed to understand your work. 
-This can include an explanation of different notebooks, basic code diagrams, conceptual explanations, etc. 
-If you have a folder of documentation, summarize it here and point to it. 
 
-## Citation 
-Include a link to your bibtex citation for others to use. 
 
-```
-@article{key , 
-    author = {You :D}, 
-    title = {title}, 
-    journal = {journal}, 
-    volume = {v}, 
-    year = {20XX}, 
-    number = {X}, 
-    pages = {XX--XX}
-}
 
-```
 
-## Acknowledgement 
-Include any acknowledgements for research groups, important collaborators not listed as a contributor, institutions, etc. 
+
+ 
+
+
+
+
+
